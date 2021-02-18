@@ -35,7 +35,7 @@ for f in sra/*_R1_001.fastq.gz
 do
 	count=$(( count + 1 ))
 
-	base=$(basename ${f} sra/${base}_R2_001.fastq.gz)
+	base=$(basename ${f} _R1_001.fastq.gz)
 	#trimmomatic: trim seq adapters
     trimmomatic PE ${f} sra/${base}_R2_001.fastq.gz \
     ${base}_1.trm1.fastq ${base}_1un.trm1.fastq \
