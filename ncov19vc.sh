@@ -168,9 +168,6 @@ do
 ####################################################################################################
  	echo "##############################...Read Depth Computation...##############################"
     #### Compute the read depths at each position for comparison
-    #sdepth: (input is aln-srt.bam) depths after quality trim (output is .tsv)
-    samtools depth -aa ${base}_trm1.aln.srt.bam > ${base}_qlt.dph
-
     #sdepth: (input is aln-srt.bam) depths after primer trim (output is .tsv)
     samtools depth -aa ${base}_trm2.srt.bam > ${base}_prm-trm.dph
 
@@ -192,7 +189,7 @@ do
     cp *.dph ${dph_dir}
 
     #move all output associated with every sample to a respective directory
-    mv ${base}* snpEff_genes.txt snpEff_summary.html output/${base}_outputs
+    mv ${base}* snpEff_genes.txt snpEff_summary.html output/${base}_outputs/
 
     #clean the slurm.out for the next sample
     cat $slurm_out >> all_slurm.out
