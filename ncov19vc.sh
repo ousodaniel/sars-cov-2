@@ -36,15 +36,15 @@ bwa index -a bwtsw -p ref/refcov ref/refcov.fa
 for f in ${fastq_dir}*_R1_001.fastq.gz
 do
 ###################################################################################################
+  	#retrieve sample base name
+    base=$(basename ${f} _R1_001.fastq.gz)
+
   	#create output directories for every sample
     mkdir -p output/${base}_outputs
 
     #initialise sample count
   	count=$(( count + 1 ))
 
-  	#retrieve sample base name
-    base=$(basename ${f} _R1_001.fastq.gz)
-    
 ###################################################################################################
     #trimmomatic: trim seq adapters
     echo "##############################...Read Quality Trimming...##############################"
