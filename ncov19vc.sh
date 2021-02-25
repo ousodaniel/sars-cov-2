@@ -60,9 +60,10 @@ do
 ###################################################################################################
     #sfixmate-markdup: remove duplicates
  	echo "##############################...Removing Duplicates...##############################"
- 	time samtools fixmate -m ${base}_trm1.aln.srt.bam ${base}_fxm.bam \
- 	| samtools sort -@ 6 | samtools markdup -d 100 -rst -f ${base}_mkd_stats \
- 	| samtools sort -@ 6 -o ${base}_mkd.srt.bam
+ 	time samtools fixmate -m ${base}_trm1.aln.srt.bam ${base}_fxm.bam
+    samtools sort -@ 6 -o ${base}_fxm.srt.bam ${base}_fxm.bam
+    samtools markdup -d 100 -rst -f ${base}_mkd_stats ${base}_fxm.srt.bam ${base}_mkd.bam
+    samtools sort -@ 6 -o ${base}_mkd.srt.bam ${base}_mkd.bam
 
 ###################################################################################################
     #itrim: (input aln-srt.bam)trim pcr primers (requres aln-srt & primer bed)
