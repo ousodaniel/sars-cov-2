@@ -6,10 +6,11 @@
 
 echo "##############################...Module Loading...##############################"
 
-printf "loading modules...\n\ttrimmomatic/0.38\n\tsamtools/1.11\n\tbwa/0.7.17\n\tpython/3.7\n\tbedtools/2.29.0 \
-\n\tivar/1.3\n\tsratoolkit/2.10.0\n"
+printf "loading modules...\n\ttrimmomatic/0.38\n\tsamtools/1.11\n\tbwa/0.7.17\n\tpython/3.7 \
+\n\tbedtools/2.29.0\n\tivar/1.3\n\tsratoolkit/2.10.0\n\tnextclade/0.12.0\n"
 
-module load trimmomatic/0.38 samtools/1.11 bwa/0.7.17 python/3.7 bedtools/2.29.0 ivar/1.3
+module load trimmomatic/0.38 samtools/1.11 bwa/0.7.17 python/3.7 bedtools/2.29.0 ivar/1.3 \
+nextclade/0.12.0
 
 
 ###################################################################################################
@@ -19,11 +20,17 @@ slurm_out=$(ls -t *.out | head -n1)
 #initialise sample count
 count=0
 
-#define the directories for common sample in/output files of interest
+#define the files/directories for common sample in/output files of interest
 #change this variables accordingly
 var_dir=/home/douso/variant_files/
 dph_dir=/home/douso/depth_files/
 fastq_dir=../cov3/sra/
+nxtc_dir=/home/douso/nextclade_files/
+dt=$(date '+%d-%m-%Y')
+touch ${dt}_nxtc.txt
+nxtc_fil=${dt}_nxtc.txt
+mkdir -p output/nextclade_outputs
+nxtc_out=./output/nextclade_outputs
 
 ###################################################################################################
 echo "##############################...Ref Indexing...##############################"
@@ -99,6 +106,9 @@ do
     echo "##############################...Generating Consensus Genome...##############################"
     samtools mpileup -A -d 0 -Q 20 ${base}_trm2.srt.bam \
     | ivar consensus -t 0.75 -p ${base}_trm2.cnscov
+
+    #write consensus .fasta to a text file to be used nextclade as input
+    cat ${base}_trm2.cnscov.fa >> ${nxtc_fil}
 
     #bwindex: (input .fa)index consensus (output mtlp)
     echo "##############################...Indexing Reads Consensus Genome...##############################"
@@ -198,4 +208,20 @@ do
     > $slurm_out
 
 done
+
+echo "##############################...Clade Assignment & Tree Generation...##############################"
+
+base=$(basename ${nxtc_fil} .txt)
+
+nextclade.js -i ${nxtc_fil} \
+--output-json=${base}.json \
+--output-tsv=${base}.tsv \
+--output-tree=${base}.tree.json
+
+#copy the consolidated consensus .fasta files to a specific folder
+cp ${base}* ${nxtc_dir}
+
+#move all nextclade associated files to a designate directory
+mv ${base}* ${nxtc_out}
+
 echo "##############################...Processed ${count} Samples...##############################"
