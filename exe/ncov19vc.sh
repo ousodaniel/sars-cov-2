@@ -32,6 +32,8 @@ nxtc_fil=${dt}_nxtc.txt
 mkdir -p output/nextclade_outputs
 nxtc_out=./output/nextclade_outputs
 threads=15
+suff1=_R1_001.fastq.gz
+suff2=_R2_001.fastq.gz
 
 ###################################################################################################
 echo "##############################...Ref Indexing...##############################"
@@ -41,11 +43,11 @@ bwa index -a bwtsw -p ref/refcov ref/refcov.fa
 
 ###################################################################################################
 #### Trimming(trm), Aligning(aln) & Sort(srt)
-for f in ${fastq_dir}*_R1_001.fastq.gz
+for f in ${fastq_dir}*${suff1}
 do
 ###################################################################################################
   	#retrieve sample base name
-    base=$(basename ${f} _R1_001.fastq.gz)
+    base=$(basename ${f} ${suff1})
 
   	#create output directories for every sample
     mkdir -p output/${base}_outputs
@@ -56,7 +58,7 @@ do
 ###################################################################################################
     #bbduk: remove contaminating human sequences
     echo "##############################...Remove Human Contam Seq...##############################"
-    bbduk.sh in=${f} in2=${fastq_dir}${base}_R2_001.fastq.gz \
+    bbduk.sh in=${f} in2=${fastq_dir}${base}${suff2} \
     out=${base}_1un.duk.fq out2=${base}_2un.duk.fq \
     outm=${base}_1.duk.fq outm2=${base}_2.duk.fq \
     ref=ref/human.fa k=30 hdist=0 stats=${base}.duk.txt
