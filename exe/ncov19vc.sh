@@ -6,10 +6,10 @@
 
 echo "##############################...Module Loading...##############################"
 
-printf "loading modules...\n\ttrimmomatic/0.38\n\tsamtools/1.11\n\tbwa/0.7.17\n\tpython/3.7 \
+printf "loading modules...\n\tbbmap/38.67\n\ttrimmomatic/0.38\n\tsamtools/1.11\n\tbwa/0.7.17\n\tpython/3.7 \
 \n\tbedtools/2.29.0\n\tivar/1.3\n\tsratoolkit/2.10.0\n\tnextclade/0.12.0\n"
 
-module load trimmomatic/0.38 samtools/1.11 bwa/0.7.17 python/3.7 bedtools/2.29.0 ivar/1.3 \
+module load bbmap/38.67 trimmomatic/0.38 samtools/1.11 bwa/0.7.17 python/3.7 bedtools/2.29.0 ivar/1.3 \
 nextclade/0.12.0
 
 
@@ -53,9 +53,17 @@ do
   	count=$(( count + 1 ))
 
 ###################################################################################################
+    #bbduk: remove contaminating human sequences
+    echo "##############################...Remove Human Contam Seq...##############################"
+    bbduk.sh in=${f} in2=${fastq_dir}${base}_R2_001.fastq.gz \
+    out=${base}_1un.duk.fq out2=${base}_2un.duk.fq \
+    outm=${base}_1.duk.fq outm2=${base}_2.duk.fq \
+    ref=ref/human.fa k=30 hdist=0 stats=${base}.duk.txt
+    
+###################################################################################################
     #trimmomatic: trim seq adapters
     echo "##############################...Read Quality Trimming...##############################"
-    trimmomatic PE -threads 6 ${f} ${fastq_dir}${base}_R2_001.fastq.gz \
+    trimmomatic PE -threads 6 ${base}_1un.duk.fq ${base}_2un.duk.fq \
     ${base}_1.trm1.fastq ${base}_1un.trm1.fastq \
     ${base}_2.trm1.fastq ${base}_2un.trm1.fastq \
     TRAILING:19 \
