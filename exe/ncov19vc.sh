@@ -31,6 +31,7 @@ touch ${dt}_nxtc.txt
 nxtc_fil=${dt}_nxtc.txt
 mkdir -p output/nextclade_outputs
 nxtc_out=./output/nextclade_outputs
+threads=15
 
 ###################################################################################################
 echo "##############################...Ref Indexing...##############################"
@@ -59,11 +60,11 @@ do
     out=${base}_1un.duk.fq out2=${base}_2un.duk.fq \
     outm=${base}_1.duk.fq outm2=${base}_2.duk.fq \
     ref=ref/human.fa k=30 hdist=0 stats=${base}.duk.txt
-    
+
 ###################################################################################################
     #trimmomatic: trim seq adapters
     echo "##############################...Read Quality Trimming...##############################"
-    trimmomatic PE -threads 6 ${base}_1un.duk.fq ${base}_2un.duk.fq \
+    trimmomatic PE -threads ${threads} ${base}_1un.duk.fq ${base}_2un.duk.fq \
     ${base}_1.trm1.fastq ${base}_1un.trm1.fastq \
     ${base}_2.trm1.fastq ${base}_2un.trm1.fastq \
     TRAILING:19 \
@@ -74,7 +75,7 @@ do
     #sview: convert aln-sam to aln-bam (output .bam)
     #ssort: srt aln-bam (output .bam)
     echo "##############################...Read Alignment to Ref...##############################"
-    bwa mem -t 6 ref/refcov ${base}_1.trm1.fastq \
+    bwa mem -t ${threads} ref/refcov ${base}_1.trm1.fastq \
     ${base}_2.trm1.fastq | samtools view -hu -F 4 -F 2048 \
     | samtools sort -n -@ 6 -o ${base}_trm1.aln.srt.bam
 
@@ -82,9 +83,9 @@ do
     #sfixmate-markdup: remove duplicates
  	echo "##############################...Removing Duplicates...##############################"
  	samtools fixmate -m ${base}_trm1.aln.srt.bam ${base}_fxm.bam
-    samtools sort -@ 6 -o ${base}_fxm.srt.bam ${base}_fxm.bam
+    samtools sort -@ ${threads} -o ${base}_fxm.srt.bam ${base}_fxm.bam
     samtools markdup -d 100 -rst -f ${base}_mkd_stats ${base}_fxm.srt.bam ${base}_mkd.bam
-    samtools sort -@ 6 -o ${base}_mkd.srt.bam ${base}_mkd.bam
+    samtools sort -@ ${threads} -o ${base}_mkd.srt.bam ${base}_mkd.bam
 
 ###################################################################################################
     #itrim: (input aln-srt.bam)trim pcr primers (requres aln-srt & primer bed)
@@ -95,7 +96,7 @@ do
 
     #ssort: (input is aln.bam)sort trm2 bam (output is .bam)
     echo "##############################...Post iVar Sort...##############################"
-    samtools sort -@ 6 -o ${base}_trm2.srt.bam ${base}_trm2.bam
+    samtools sort -@ ${threads} -o ${base}_trm2.srt.bam ${base}_trm2.bam
    
 ###################################################################################################
     echo "##############################...Extracting Primer Read Coverage...##############################"
@@ -126,7 +127,7 @@ do
     #sview|ssort: convert aln-sam to aln-bam | sort aln-bam
     echo "##############################...Aligning Primers.fa to Consensus Genome...##############################"
     bwa mem -k 5 -T 16 ${base}_trm2.cnscov primer/nCoV-2019.fa \
-    | samtools view -hu -F 4 | samtools sort -@ 6 -o \
+    | samtools view -hu -F 4 | samtools sort -@ ${threads} -o \
     ${base}_nCoV-2019.cns.aln.srt.bam
 
     #smpileup: pileup primers against cns ref
@@ -157,7 +158,7 @@ do
 
     #sort trm3 bam
     echo "##############################...Sorting Alignment...##############################"
-    samtools sort -@ 6 -o ${base}_msk.trm3.srt.bam ${base}_msk.trm3.bam
+    samtools sort -@ ${threads} -o ${base}_msk.trm3.srt.bam ${base}_msk.trm3.bam
 
 ####################################################################################################
  	echo "##############################...Calling Variants...##############################"
