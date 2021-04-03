@@ -81,7 +81,7 @@ do
     echo "##############################...Read Alignment to Ref...##############################"
     bwa mem -t ${threads} ref/refcov ${base}_1.trm1.fastq \
     ${base}_2.trm1.fastq | samtools view -hu -F 4 -F 2048 \
-    | samtools sort -n -@ 6 -o ${base}_trm1.aln.srt.bam
+    | samtools sort -n -@ ${threads} -o ${base}_trm1.aln.srt.bam
 
 ###################################################################################################
     #sfixmate-markdup: remove duplicates
