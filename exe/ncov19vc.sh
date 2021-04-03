@@ -69,8 +69,10 @@ do
     trimmomatic PE -threads ${threads} ${base}_1un.duk.fq ${base}_2un.duk.fq \
     ${base}_1.trm1.fastq ${base}_1un.trm1.fastq \
     ${base}_2.trm1.fastq ${base}_2un.trm1.fastq \
-    TRAILING:19 \
-    HEADCROP:8
+    LEADING:20 \
+    SLIDINGWINDOW:4:20 \
+    TRAILING:20 \
+    MINLEN:30
 
 ################################################################################################### 	
     #bwmem: align reads to indexed genome (output .sam)
