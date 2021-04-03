@@ -22,11 +22,13 @@ count=0
 
 #define the files/directories for common sample in/output files of interest
 #change this variables accordingly
+
+dt=$(date '+%d-%m-%Y_%H:%M')
+
 var_dir=/home/${USER}/variant_files/
 dph_dir=/home/${USER}/depth_files/
 fastq_dir=../cov3/sra/
 nxtc_dir=/home/${USER}/nextclade_files/
-dt=$(date '+%d-%m-%Y')
 touch ${dt}_nxtc.txt
 nxtc_fil=${dt}_nxtc.txt
 mkdir -p output/nextclade_outputs
