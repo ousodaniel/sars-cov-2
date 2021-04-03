@@ -25,10 +25,16 @@ count=0
 
 dt=$(date '+%d-%m-%Y_%H:%M')
 
-var_dir=/home/${USER}/variant_files/
-dph_dir=/home/${USER}/depth_files/
-fastq_dir=../cov3/sra/
-nxtc_dir=/home/${USER}/nextclade_files/
+home_dir=~
+
+mkdir -p ${home_dir}/variant_files_${dt} \
+${home_dir}/depth_files_${dt} \
+${home_dir}/nextclade_files_${dt}
+
+var_dir=${home_dir}/variant_files_${dt}/
+dph_dir=${home_dir}/depth_files_${dt}/
+fastq_dir=${home_dir}/raw/batch2_01-04-2021/
+nxtc_dir=${home_dir}/nextclade_files_${dt}/
 touch ${dt}_nxtc.txt
 nxtc_fil=${dt}_nxtc.txt
 mkdir -p output/nextclade_outputs
