@@ -33,7 +33,7 @@ mkdir -p output/nextclade_outputs
 nxtc_out=./output/nextclade_outputs
 threads=15
 suff1=_R1_001.fastq.gz
-suff2=_R2_001.fastq.gz
+suff2=$(sed 's/1/2/' <<< ${suff1})
 
 ###################################################################################################
 echo "##############################...Ref Indexing...##############################"
