@@ -177,7 +177,7 @@ do
     #### Variant Calling
     #smpileup: pile trim3 bam
     samtools mpileup -AB -d 0 -Q 20 --reference ref/refcov.fa \
-    ${base}_mkd.srt.bam | ivar variants -m 10 -p ${base}_variants -t 0.25 \
+    ${base}_msk.trm3.srt.bam | ivar variants -m 10 -p ${base}_variants -t 0.25 \
     -r ref/refcov.fa -g ref/refcov.gff
 
     #ifiltervariants: (input .tsv)filter variants (output .tsv)
