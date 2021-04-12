@@ -26,8 +26,9 @@ do
 	num=$(( $num + 1 ))
 
 	base=$(basename ${rd1} ${fmsuff1})
-	cat ${base}${fmsuff1} ${base}${fmsuff2} ${base}${fmsuff3} ${base}${fmsuff4} > merged/${base}${suff1}
-	cat ${base}${rvmsuff1} ${base}${rvmsuff2} ${base}${rvmsuff3} ${base}${rvmsuff4} > merged/${base}${suff2}
+
+        zcat ${base}${fmsuff1} ${base}${fmsuff2} ${base}${fmsuff3} ${base}${fmsuff4} | gzip -c > merged/${base}${suff1}
+        zcat ${base}${rvmsuff1} ${base}${rvmsuff2} ${base}${rvmsuff3} ${base}${rvmsuff4} | gzip -c > merged/${base}${suff2}
 done
 
 echo "Merged ${num} files, see the 'merged' directory"
