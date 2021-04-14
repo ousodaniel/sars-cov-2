@@ -3,36 +3,35 @@
 mkdir -p merged
 
 fmsuff1=_L001_R1_001.fastq.gz
-fmsuff2=$(sed 's/L001/L002/' <<< ${fmsuff1})
-fmsuff3=$(sed 's/L001/L003/' <<< ${fmsuff1})
-fmsuff4=$(sed 's/L001/L004/' <<< ${fmsuff1})
-
-suff1=_1.fastq.gz
-suff2=$(sed 's/1/2/' <<< ${suff1})
-
-rvmsuff1=$(sed 's/1/2/' <<< ${fmsuff1})
-rvmsuff2=$(sed 's/L001/L002/' <<< ${rvmsuff1})
-rvmsuff3=$(sed 's/L001/L003/' <<< ${rvmsuff1})
-rvmsuff4=$(sed 's/L001/L004/' <<< ${rvmsuff1})
 
 count=`ls -1 *${fmsuff1} | wc -l`
 
 num=0
 
+suff1=_1.fastq.gz
+suff2=$(sed 's/1/2/' <<< ${suff1})
+
 if [ $count != 0 ];
 then
 for rd1 in *${fmsuff1}
 do
-	num=$(( $num + 1 ))
+  	rrd1=$(sed 's/R1/R2/' <<< $rd1)
+        num=$(( $num + 1 ))
+        rd2=$(sed 's/L001/L002/' <<< $rd1)
+        rd3=$(sed 's/L001/L003/' <<< $rd1)
+        rd4=$(sed 's/L001/L004/' <<< $rd1)
 
-	base=$(basename ${rd1} ${fmsuff1})
+        rrd2=$(sed 's/L001/L002/' <<< $rrd1)
+        rrd3=$(sed 's/L001/L003/' <<< $rrd1)
+        rrd4=$(sed 's/L001/L004/' <<< $rrd1)
 
-        zcat ${base}${fmsuff1} ${base}${fmsuff2} ${base}${fmsuff3} ${base}${fmsuff4} | gzip -c > merged/${base}${suff1}
-        zcat ${base}${rvmsuff1} ${base}${rvmsuff2} ${base}${rvmsuff3} ${base}${rvmsuff4} | gzip -c > merged/${base}${suff2}
+        base=$(basename ${rd1} ${fmsuff1})
+        cat $rd1 $rd2 $rd3 $rd4 > merged/${base}_1.fastq.gz
+        cat $rrd1 $rrd2 $rrd3 $rrd4 > merged/${base}_2.fastq.gz
 done
 
-echo "Merged ${num} files, see the 'merged' directory"
+echo "${num} files to be merged were founs, see output($num) in the 'merged' directory"
 
-else 
-	echo "There is no file with ${fmsuff1} suffix in the directory"
+else
+    	echo "There is no file with ${fmsuff1} suffix in the directory"
 fi
